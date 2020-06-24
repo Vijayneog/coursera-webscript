@@ -1,0 +1,203 @@
+!pip install wordcloud
+!pip install fileupload
+!pip install ipywidgets
+!jupyter nbextension install --py --user fileupload
+!jupyter nbextension enable --py fileupload
+
+import wordcloud
+import numpy as np
+from matplotlib import pyplot as plt
+from IPython.display import display
+import fileupload
+import io
+import sys
+Requirement already satisfied: wordcloud in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (1.6.0)
+Requirement already satisfied: matplotlib in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from wordcloud) (3.1.3)
+Requirement already satisfied: pillow in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from wordcloud) (7.0.0)
+Requirement already satisfied: numpy>=1.6.1 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from wordcloud) (1.18.1)
+Requirement already satisfied: kiwisolver>=1.0.1 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from matplotlib->wordcloud) (1.1.0)
+Requirement already satisfied: python-dateutil>=2.1 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from matplotlib->wordcloud) (2.8.1)
+Requirement already satisfied: cycler>=0.10 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from matplotlib->wordcloud) (0.10.0)
+Requirement already satisfied: pyparsing!=2.0.4,!=2.1.2,!=2.1.6,>=2.0.1 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from matplotlib->wordcloud) (2.4.6)
+Requirement already satisfied: setuptools in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from kiwisolver>=1.0.1->matplotlib->wordcloud) (45.2.0.post20200210)
+Requirement already satisfied: six>=1.5 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from python-dateutil>=2.1->matplotlib->wordcloud) (1.14.0)
+Requirement already satisfied: fileupload in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (0.1.5)
+Requirement already satisfied: notebook>=4.2 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from fileupload) (6.0.3)
+Requirement already satisfied: ipywidgets>=5.1 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from fileupload) (7.5.1)
+Requirement already satisfied: traitlets>=4.2 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from fileupload) (4.3.3)
+Requirement already satisfied: jupyter-core>=4.6.1 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from notebook>=4.2->fileupload) (4.6.1)
+Requirement already satisfied: jupyter-client>=5.3.4 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from notebook>=4.2->fileupload) (5.3.4)
+Requirement already satisfied: pyzmq>=17 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from notebook>=4.2->fileupload) (18.1.1)
+Requirement already satisfied: ipython-genutils in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from notebook>=4.2->fileupload) (0.2.0)
+Requirement already satisfied: nbconvert in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from notebook>=4.2->fileupload) (5.6.1)
+Requirement already satisfied: prometheus-client in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from notebook>=4.2->fileupload) (0.7.1)
+Requirement already satisfied: nbformat in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from notebook>=4.2->fileupload) (5.0.4)
+Requirement already satisfied: Send2Trash in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from notebook>=4.2->fileupload) (1.5.0)
+Requirement already satisfied: terminado>=0.8.1 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from notebook>=4.2->fileupload) (0.8.3)
+Requirement already satisfied: ipykernel in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from notebook>=4.2->fileupload) (5.1.4)
+Requirement already satisfied: tornado>=5.0 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from notebook>=4.2->fileupload) (6.0.3)
+Requirement already satisfied: jinja2 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from notebook>=4.2->fileupload) (2.11.1)
+Requirement already satisfied: ipython>=4.0.0; python_version >= "3.3" in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipywidgets>=5.1->fileupload) (7.12.0)
+Requirement already satisfied: widgetsnbextension~=3.5.0 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipywidgets>=5.1->fileupload) (3.5.1)
+Requirement already satisfied: decorator in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from traitlets>=4.2->fileupload) (4.4.1)
+Requirement already satisfied: six in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from traitlets>=4.2->fileupload) (1.14.0)
+Requirement already satisfied: python-dateutil>=2.1 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from jupyter-client>=5.3.4->notebook>=4.2->fileupload) (2.8.1)
+Requirement already satisfied: pygments in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from nbconvert->notebook>=4.2->fileupload) (2.5.2)
+Requirement already satisfied: testpath in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from nbconvert->notebook>=4.2->fileupload) (0.4.4)
+Requirement already satisfied: entrypoints>=0.2.2 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from nbconvert->notebook>=4.2->fileupload) (0.3)
+Requirement already satisfied: pandocfilters>=1.4.1 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from nbconvert->notebook>=4.2->fileupload) (1.4.2)
+Requirement already satisfied: defusedxml in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from nbconvert->notebook>=4.2->fileupload) (0.6.0)
+Requirement already satisfied: mistune<2,>=0.8.1 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from nbconvert->notebook>=4.2->fileupload) (0.8.4)
+Requirement already satisfied: bleach in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from nbconvert->notebook>=4.2->fileupload) (3.1.0)
+Requirement already satisfied: jsonschema!=2.5.0,>=2.4 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from nbformat->notebook>=4.2->fileupload) (3.2.0)
+Requirement already satisfied: MarkupSafe>=0.23 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from jinja2->notebook>=4.2->fileupload) (1.1.1)
+Requirement already satisfied: pexpect; sys_platform != "win32" in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipython>=4.0.0; python_version >= "3.3"->ipywidgets>=5.1->fileupload) (4.8.0)
+Requirement already satisfied: jedi>=0.10 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipython>=4.0.0; python_version >= "3.3"->ipywidgets>=5.1->fileupload) (0.14.1)
+Requirement already satisfied: backcall in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipython>=4.0.0; python_version >= "3.3"->ipywidgets>=5.1->fileupload) (0.1.0)
+Requirement already satisfied: setuptools>=18.5 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipython>=4.0.0; python_version >= "3.3"->ipywidgets>=5.1->fileupload) (45.2.0.post20200210)
+Requirement already satisfied: pickleshare in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipython>=4.0.0; python_version >= "3.3"->ipywidgets>=5.1->fileupload) (0.7.5)
+Requirement already satisfied: prompt-toolkit!=3.0.0,!=3.0.1,<3.1.0,>=2.0.0 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipython>=4.0.0; python_version >= "3.3"->ipywidgets>=5.1->fileupload) (3.0.3)
+Requirement already satisfied: webencodings in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from bleach->nbconvert->notebook>=4.2->fileupload) (0.5.1)
+Requirement already satisfied: pyrsistent>=0.14.0 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from jsonschema!=2.5.0,>=2.4->nbformat->notebook>=4.2->fileupload) (0.15.7)
+Requirement already satisfied: attrs>=17.4.0 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from jsonschema!=2.5.0,>=2.4->nbformat->notebook>=4.2->fileupload) (19.3.0)
+Requirement already satisfied: importlib-metadata; python_version < "3.8" in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from jsonschema!=2.5.0,>=2.4->nbformat->notebook>=4.2->fileupload) (1.5.0)
+Requirement already satisfied: ptyprocess>=0.5 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from pexpect; sys_platform != "win32"->ipython>=4.0.0; python_version >= "3.3"->ipywidgets>=5.1->fileupload) (0.6.0)
+Requirement already satisfied: parso>=0.5.0 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from jedi>=0.10->ipython>=4.0.0; python_version >= "3.3"->ipywidgets>=5.1->fileupload) (0.5.2)
+Requirement already satisfied: wcwidth in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from prompt-toolkit!=3.0.0,!=3.0.1,<3.1.0,>=2.0.0->ipython>=4.0.0; python_version >= "3.3"->ipywidgets>=5.1->fileupload) (0.1.8)
+Requirement already satisfied: zipp>=0.5 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from importlib-metadata; python_version < "3.8"->jsonschema!=2.5.0,>=2.4->nbformat->notebook>=4.2->fileupload) (2.2.0)
+Requirement already satisfied: ipywidgets in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (7.5.1)
+Requirement already satisfied: widgetsnbextension~=3.5.0 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipywidgets) (3.5.1)
+Requirement already satisfied: nbformat>=4.2.0 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipywidgets) (5.0.4)
+Requirement already satisfied: ipython>=4.0.0; python_version >= "3.3" in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipywidgets) (7.12.0)
+Requirement already satisfied: traitlets>=4.3.1 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipywidgets) (4.3.3)
+Requirement already satisfied: ipykernel>=4.5.1 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipywidgets) (5.1.4)
+Requirement already satisfied: notebook>=4.4.1 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from widgetsnbextension~=3.5.0->ipywidgets) (6.0.3)
+Requirement already satisfied: ipython-genutils in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from nbformat>=4.2.0->ipywidgets) (0.2.0)
+Requirement already satisfied: jsonschema!=2.5.0,>=2.4 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from nbformat>=4.2.0->ipywidgets) (3.2.0)
+Requirement already satisfied: jupyter-core in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from nbformat>=4.2.0->ipywidgets) (4.6.1)
+Requirement already satisfied: setuptools>=18.5 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipython>=4.0.0; python_version >= "3.3"->ipywidgets) (45.2.0.post20200210)
+Requirement already satisfied: pygments in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipython>=4.0.0; python_version >= "3.3"->ipywidgets) (2.5.2)
+Requirement already satisfied: jedi>=0.10 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipython>=4.0.0; python_version >= "3.3"->ipywidgets) (0.14.1)
+Requirement already satisfied: pickleshare in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipython>=4.0.0; python_version >= "3.3"->ipywidgets) (0.7.5)
+Requirement already satisfied: decorator in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipython>=4.0.0; python_version >= "3.3"->ipywidgets) (4.4.1)
+Requirement already satisfied: pexpect; sys_platform != "win32" in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipython>=4.0.0; python_version >= "3.3"->ipywidgets) (4.8.0)
+Requirement already satisfied: backcall in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipython>=4.0.0; python_version >= "3.3"->ipywidgets) (0.1.0)
+Requirement already satisfied: prompt-toolkit!=3.0.0,!=3.0.1,<3.1.0,>=2.0.0 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipython>=4.0.0; python_version >= "3.3"->ipywidgets) (3.0.3)
+Requirement already satisfied: six in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from traitlets>=4.3.1->ipywidgets) (1.14.0)
+Requirement already satisfied: tornado>=4.2 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipykernel>=4.5.1->ipywidgets) (6.0.3)
+Requirement already satisfied: jupyter-client in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from ipykernel>=4.5.1->ipywidgets) (5.3.4)
+Requirement already satisfied: jinja2 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (2.11.1)
+Requirement already satisfied: prometheus-client in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (0.7.1)
+Requirement already satisfied: nbconvert in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (5.6.1)
+Requirement already satisfied: terminado>=0.8.1 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (0.8.3)
+Requirement already satisfied: Send2Trash in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (1.5.0)
+Requirement already satisfied: pyzmq>=17 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (18.1.1)
+Requirement already satisfied: attrs>=17.4.0 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from jsonschema!=2.5.0,>=2.4->nbformat>=4.2.0->ipywidgets) (19.3.0)
+Requirement already satisfied: pyrsistent>=0.14.0 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from jsonschema!=2.5.0,>=2.4->nbformat>=4.2.0->ipywidgets) (0.15.7)
+Requirement already satisfied: importlib-metadata; python_version < "3.8" in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from jsonschema!=2.5.0,>=2.4->nbformat>=4.2.0->ipywidgets) (1.5.0)
+Requirement already satisfied: parso>=0.5.0 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from jedi>=0.10->ipython>=4.0.0; python_version >= "3.3"->ipywidgets) (0.5.2)
+Requirement already satisfied: ptyprocess>=0.5 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from pexpect; sys_platform != "win32"->ipython>=4.0.0; python_version >= "3.3"->ipywidgets) (0.6.0)
+Requirement already satisfied: wcwidth in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from prompt-toolkit!=3.0.0,!=3.0.1,<3.1.0,>=2.0.0->ipython>=4.0.0; python_version >= "3.3"->ipywidgets) (0.1.8)
+Requirement already satisfied: python-dateutil>=2.1 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from jupyter-client->ipykernel>=4.5.1->ipywidgets) (2.8.1)
+Requirement already satisfied: MarkupSafe>=0.23 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from jinja2->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (1.1.1)
+Requirement already satisfied: testpath in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from nbconvert->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (0.4.4)
+Requirement already satisfied: entrypoints>=0.2.2 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from nbconvert->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (0.3)
+Requirement already satisfied: bleach in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from nbconvert->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (3.1.0)
+Requirement already satisfied: mistune<2,>=0.8.1 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from nbconvert->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (0.8.4)
+Requirement already satisfied: pandocfilters>=1.4.1 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from nbconvert->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (1.4.2)
+Requirement already satisfied: defusedxml in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from nbconvert->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (0.6.0)
+Requirement already satisfied: zipp>=0.5 in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from importlib-metadata; python_version < "3.8"->jsonschema!=2.5.0,>=2.4->nbformat>=4.2.0->ipywidgets) (2.2.0)
+Requirement already satisfied: webencodings in /home/hrithik_raj/anaconda3/lib/python3.7/site-packages (from bleach->nbconvert->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (0.5.1)
+Installing /home/hrithik_raj/anaconda3/lib/python3.7/site-packages/fileupload/static -> fileupload
+Up to date: /home/hrithik_raj/.local/share/jupyter/nbextensions/fileupload/widget.js
+Up to date: /home/hrithik_raj/.local/share/jupyter/nbextensions/fileupload/extension.js
+Up to date: /home/hrithik_raj/.local/share/jupyter/nbextensions/fileupload/fileupload/widget.js
+- Validating: OK
+
+    To initialize this nbextension in the browser every time the notebook (or other app) loads:
+    
+          jupyter nbextension enable fileupload --user --py
+    
+Enabling notebook extension fileupload/extension...
+Traceback (most recent call last):
+  File "/home/hrithik_raj/anaconda3/bin/jupyter-nbextension", line 11, in <module>
+    sys.exit(main())
+  File "/home/hrithik_raj/anaconda3/lib/python3.7/site-packages/jupyter_core/application.py", line 268, in launch_instance
+    return super(JupyterApp, cls).launch_instance(argv=argv, **kwargs)
+  File "/home/hrithik_raj/anaconda3/lib/python3.7/site-packages/traitlets/config/application.py", line 664, in launch_instance
+    app.start()
+  File "/home/hrithik_raj/anaconda3/lib/python3.7/site-packages/notebook/nbextensions.py", line 983, in start
+    super(NBExtensionApp, self).start()
+  File "/home/hrithik_raj/anaconda3/lib/python3.7/site-packages/jupyter_core/application.py", line 257, in start
+    self.subapp.start()
+  File "/home/hrithik_raj/anaconda3/lib/python3.7/site-packages/notebook/nbextensions.py", line 891, in start
+    self.toggle_nbextension_python(self.extra_args[0])
+  File "/home/hrithik_raj/anaconda3/lib/python3.7/site-packages/notebook/nbextensions.py", line 867, in toggle_nbextension_python
+    logger=self.log)
+  File "/home/hrithik_raj/anaconda3/lib/python3.7/site-packages/notebook/nbextensions.py", line 478, in enable_nbextension_python
+    logger=logger)
+  File "/home/hrithik_raj/anaconda3/lib/python3.7/site-packages/notebook/nbextensions.py", line 381, in _set_nbextension_state_python
+    for nbext in nbexts]
+  File "/home/hrithik_raj/anaconda3/lib/python3.7/site-packages/notebook/nbextensions.py", line 381, in <listcomp>
+    for nbext in nbexts]
+  File "/home/hrithik_raj/anaconda3/lib/python3.7/site-packages/notebook/nbextensions.py", line 346, in _set_nbextension_state
+    cm.update(section, {"load_extensions": {require: state}})
+  File "/home/hrithik_raj/anaconda3/lib/python3.7/site-packages/notebook/config_manager.py", line 132, in update
+    self.set(section_name, data)
+  File "/home/hrithik_raj/anaconda3/lib/python3.7/site-packages/notebook/config_manager.py", line 121, in set
+    f = io.open(filename, 'w', encoding='utf-8')
+PermissionError: [Errno 13] Permission denied: '/home/hrithik_raj/.jupyter/nbconfig/notebook.json'
+In [2]:
+# This is the uploader widget
+
+def _upload():
+
+    _upload_widget = fileupload.FileUploadWidget()
+
+    def _cb(change):
+        global file_contents
+        decoded = io.StringIO(change['owner'].data.decode('utf-8'))
+        filename = change['owner'].filename
+        print('Uploaded `{}` ({:.2f} kB)'.format(
+            filename, len(decoded.read()) / 2 **10))
+        file_contents = decoded.getvalue()
+
+    _upload_widget.observe(_cb, names='data')
+    display(_upload_widget)
+
+_upload()
+FileUploadWidget(label='Browse', _dom_classes=('widget_item', 'btn-group'))
+In [3]:
+def calculate_frequencies(file_contents):
+    
+    punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
+    uninteresting_words = ["the","for", "a", "to", "if", "is","not","on", "it", "of", "and", "or", "an", "as","in", "i", "me", "my", \
+    "we", "our", "ours", "you", "your", "yours", "he", "she", "him", "his", "her", "hers", "its", "they", "them", \
+    "their", "what", "which", "who", "whom", "this", "that", "am", "are", "was", "were", "be", "been", "being", \
+    "have", "has", "had", "do", "does", "did", "but", "at", "by", "with", "from", "here", "when", "where", "how", \
+    "all", "any", "both", "each", "few", "more", "some", "such", "no", "nor", "too", "very", "can", "will", "just","than"]
+    new_content = ""
+    frequencies = {}
+    for ch in file_contents:
+        if ch not in punctuations:
+            new_content += ch
+    temp_file = new_content.split(" ")
+    while "" in temp_file:
+        temp_file.remove("")
+    for word in temp_file:
+        if word.lower() not in uninteresting_words:
+            if word in frequencies:
+                frequencies[word] +=1
+            else:
+                frequencies[word] = 1
+    
+    #wordcloud
+    cloud = wordcloud.WordCloud()
+    cloud.generate_from_frequencies(frequencies)
+    return cloud.to_array()
+In [ ]:
+# Display your wordcloud image
+myimage = calculate_frequencies(file_contents)
+plt.imshow(myimage, interpolation = 'nearest')
+plt.axis('off')
+plt.show()
